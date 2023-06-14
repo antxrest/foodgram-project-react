@@ -28,13 +28,6 @@ class RecipesViewSet(viewsets.ModelViewSet):
     в избранное, добавление в корзину и скачивание списка покупок
     """
 
-    queryset = Recipes.objects.all()
-    filter_backends = (DjangoFilterBackend,)
-    filter_class = RecipeFilter
-    permission_classes = (IsAuthorOrReadOnly,)
-    pagination_class = CustomPagination
-
-    queryset = Recipes.objects.all()
     filter_backends = (DjangoFilterBackend,)
     filter_class = RecipeFilter
     filterset_fields = ('tags',)
@@ -48,18 +41,20 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Recipes.objects.all()
-        author = self.request.user
-        if self.request.GET.get('is_favorited'):
-            favorite_recipes_ids = Favorite.objects.filter(
-                user=author).values('recipe_id')
-
-            return queryset.filter(pk__in=favorite_recipes_ids)
-
-        if self.request.GET.get('is_in_shopping_cart'):
-            cart_recipes_ids = ShoppingCart.objects.filter(
-                user=author).values('recipe_id')
-            return queryset.filter(pk__in=cart_recipes_ids)
-        return queryset
+        tags = self.request.query_params.getlist('tags')
+        value_shopping_cart = self.request.GET.get('is_in_shopping_cart')
+        value_is_favorited = self.request.GET.get('is_favorited')
+        if value_is_favorited:
+            queryset = (
+                RecipeFilter.filter_is_favorited(
+                    self, queryset, value_is_favorited))
+        if value_shopping_cart:
+            queryset = (
+                RecipeFilter.filter_is_in_shopping_cart(
+                    self, queryset, value_shopping_cart))
+        if tags:
+            queryset = RecipeFilter.filter_tags(self, queryset, tags)
+        return self.filter_queryset(queryset).distinct()
 
     def add_in_list(self, model, user, pk):
         if model.objects.filter(user=user, recipe__id=pk).exists():
