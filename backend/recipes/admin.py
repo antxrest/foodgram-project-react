@@ -44,7 +44,7 @@ class TagsAdmin(admin.ModelAdmin):
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe')
     search_fields = ('pk', 'user', 'recipe')
-    list_filter  = ('user', 'recipe')
+    list_filter = ('user', 'recipe')
     empty_value_display = '-пусто-'
 
 
@@ -52,5 +52,5 @@ class FavoriteAdmin(admin.ModelAdmin):
 class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe')
     search_fields = ('pk', 'user', 'recipe')
-    list_filter  = ('user', 'recipe')
+    list_filter = ('user', 'recipe')
     empty_value_display = '-пусто-'
