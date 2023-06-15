@@ -4,12 +4,12 @@ from django.core.validators import MinValueValidator, validate_slug
 from django.db import models
 
 from recipes.validators import ColorValidator
-from users.validators import NameValidator
+from users.validators import UserNameValidator
 
 User = get_user_model()
 
 
-regex_validator = NameValidator()
+regex_validator = UserNameValidator()
 
 
 class Ingredient(models.Model):

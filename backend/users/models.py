@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.conf import settings
 
-from users.validators import NameValidator, validate_username
+from users.validators import UserNameValidator, validate_username
 
 
 class User(AbstractUser):
@@ -24,7 +24,7 @@ class User(AbstractUser):
     first_name = models.CharField(
         verbose_name='Имя',
         max_length=settings.MAX_LENGTH_USER,
-        validators=(NameValidator(),),
+        validators=(UserNameValidator(),),
         help_text=(
             'Введите свое имя'
         ),
@@ -32,7 +32,7 @@ class User(AbstractUser):
     last_name = models.CharField(
         verbose_name='Фамилия',
         max_length=settings.MAX_LENGTH_USER,
-        validators=(NameValidator(),),
+        validators=(UserNameValidator(),),
         help_text=(
             'Введите свою фамилию'
         ),

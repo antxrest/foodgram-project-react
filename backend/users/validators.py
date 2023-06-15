@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 
-class NameValidator(validators.RegexValidator):
+class UserNameValidator(validators.RegexValidator):
     regex = r'^[а-яА-ЯёЁa-zA-Z -]+$'
     message = _(
         "Введите символы на литинице/кирилице"
