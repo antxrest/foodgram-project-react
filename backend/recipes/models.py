@@ -15,7 +15,7 @@ regex_validator = NameValidator()
 class Ingredient(models.Model):
     """Модель ингредиентов."""
     name = models.CharField(max_length=settings.MAX_LENGTH_INGREDIENT,
-                            verbose_name='Название инградиента',
+                            verbose_name='Название ингредиента',
                             help_text='Введите название ингредиента',
                             validators=[regex_validator])
     measurement_unit = models.CharField(
