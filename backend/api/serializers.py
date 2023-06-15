@@ -112,12 +112,12 @@ class RecipesListSerializer(serializers.ModelSerializer):
         required=False,
         allow_null=True
     )
-    is_Favorite = serializers.SerializerMethodField()
+    is_favorite = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipes
         fields = (
-            'id', 'tags', 'author', 'ingredients', 'is_Favorite',
+            'id', 'tags', 'author', 'ingredients', 'is_favorite',
             'is_in_shopping_cart', 'name', 'image', 'text', 'cooking_time'
         )
 
@@ -125,7 +125,7 @@ class RecipesListSerializer(serializers.ModelSerializer):
         return IngredientsToRecipesSerializer(
             recipes.ingredients.all(), many=True).data
 
-    def get_is_Favorite(self, recipes, *args, **kwargs):
+    def get_is_favorite(self, recipes, *args, **kwargs):
         data = self.context.get('request')
         if data is None or data.user.is_anonymous:
             return False
