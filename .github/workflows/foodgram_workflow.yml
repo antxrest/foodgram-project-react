@@ -69,12 +69,12 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          cd infra/
-          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
-          sudo docker compose stop
+          cd foodgram/
+          sudo docker compose down
           sudo systemctl stop nginx
-          sudo docker compose rm -f web
           sudo docker system prune -af
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
           rm .env
           touch .env
           echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
