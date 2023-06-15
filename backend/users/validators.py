@@ -1,18 +1,20 @@
-from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator
+from django.core import validators
+from django.utils.translation import gettext_lazy as _
+from rest_framework import serializers
 
 
-def check_username(value):
-    if value.lower() == 'me':
-        raise ValidationError(
-            'Имя пользователя не может быть "Me, ME, me, mE'
-        )
-
-
-class UserNameValidator(RegexValidator):
+class NameValidator(validators.RegexValidator):
     regex = r'^[а-яА-ЯёЁa-zA-Z -]+$'
-    message = (
-        'Введите правильное имя. Оно должно включать только буквы, '
-        'пробел и дефис.'
+    message = _(
+        "Введите символы на литинице/кирилице"
     )
     flags = 0
+
+
+def validate_username(value):
+    """Валидатор, не допускающий создания пользователя с логином 'me'."""
+    if value.lower() == 'me':
+        raise serializers.ValidationError(
+            'Нельзя использовать \'me\' в качестве логина'
+        )
+    return value

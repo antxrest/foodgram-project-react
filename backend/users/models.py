@@ -1,78 +1,95 @@
-from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
-from django.db.models import CheckConstraint, UniqueConstraint
+from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.conf import settings
 
-from users.validators import UserNameValidator, check_username
-
-regex_validator = UserNameValidator()
+from users.validators import NameValidator, validate_username
 
 
 class User(AbstractUser):
-    """Пользовательская модель пользователя."""
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
-
-    email = models.EmailField(max_length=settings.MAX_LENGTH_EMAIL,
-                              unique=True,
-                              verbose_name='Электронная почта',
-                              help_text='Введите e-mail')
-    first_name = models.CharField(max_length=settings.MAX_LENGTH_USER,
-                                  verbose_name='Имя',
-                                  help_text='Введите имя',
-                                  validators=[regex_validator])
-    last_name = models.CharField(max_length=settings.MAX_LENGTH_USER,
-                                 verbose_name='Фамилия',
-                                 help_text='Введите фамилию',
-                                 validators=[regex_validator])
-    password = models.CharField(max_length=settings.MAX_LENGTH_USER,
-                                verbose_name='Пароль',
-                                help_text='Придумайте пароль')
+    """Модель пользователя"""
     username = models.CharField(
-        max_length=settings.MAX_LENGTH_USER, unique=True,
         verbose_name='Имя пользователя',
-        help_text='Имя пользователя',
-        validators=[check_username,
-                    UnicodeUsernameValidator()
-                    ]
+        max_length=settings.MAX_LENGTH_USER,
+        unique=True,
+        validators=(UnicodeUsernameValidator(),
+                    validate_username),
+        help_text=(
+            'Требуется. Не более 150 символов. Только буквы, цифры и @/./+/-/_'
+        ),
+        error_messages={
+            'unique': 'Пользователь с таким именем уже существует',
+        },
+    )
+    first_name = models.CharField(
+        verbose_name='Имя',
+        max_length=settings.MAX_LENGTH_USER,
+        validators=(NameValidator(),),
+        help_text=(
+            'Введите свое имя'
+        ),
+    )
+    last_name = models.CharField(
+        verbose_name='Фамилия',
+        max_length=settings.MAX_LENGTH_USER,
+        validators=(NameValidator(),),
+        help_text=(
+            'Введите свою фамилию'
+        ),
+    )
+    email = models.EmailField(
+        verbose_name='email адрес',
+        max_length=settings.MAX_LENGTH_EMAIL,
+        unique=True,
+        help_text=(
+            'Введите электронный адрес в формате name@yandex.ru'
+        ),
+    )
+    following = models.ManyToManyField(
+        'self',
+        through='Follow',
+        related_name='followers',
+        symmetrical=False
     )
 
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+    USERNAME_FIELD = 'email'
+
     class Meta:
+        ordering = ('username', 'email')
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        ordering = ('id',)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.username
 
 
 class Follow(models.Model):
-    """Подписка на автора рецептурной модели."""
     user = models.ForeignKey(
         User,
-        related_name='follower',
-        verbose_name='Подписчик',
         on_delete=models.CASCADE,
+        related_name='from_follower',
+        verbose_name='Подписчик',
+        help_text='Тот кто подписался',
     )
     author = models.ForeignKey(
         User,
-        related_name='following',
-        verbose_name='Автор',
         on_delete=models.CASCADE,
+        related_name='to_following',
+        verbose_name='Кумир',
+        help_text='Тот на кого подписались',
     )
+    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ('id',)
         constraints = [
-            UniqueConstraint(
-                fields=['user', 'author'],
-                name='Ограничение повторной подписки'
-            ),
-            CheckConstraint(
-                name="Ограничение на самоподписку",
-                check=~models.Q(user=models.F('author')),
-            ),
+            models.UniqueConstraint(fields=(
+                'user', 'author'), name='unique_follow'),
+            models.CheckConstraint(check=~models.Q(user=models.F(
+                'author')), name='dont_follow_your_self'),
         ]
-        verbose_name = 'Подписка'
+        verbose_name = 'Подписки'
         verbose_name_plural = 'Подписки'
+
+    def __str__(self):
+        return f'{self.user} подписался на {self.author}'
