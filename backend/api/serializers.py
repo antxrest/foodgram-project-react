@@ -6,7 +6,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from recipes.models import (Favorite, Ingredient, RecipeIngredient, Recipes,
-                            ShoppingCart, Tags)
+                            Tags)
 
 User = get_user_model()
 
