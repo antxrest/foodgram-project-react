@@ -5,16 +5,16 @@ from dotenv import find_dotenv, load_dotenv
 
 load_dotenv(find_dotenv())
 
-POSTGRESQL_DB = True
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
+# для локального теста
+# SECRET_KEY = "a+dyhls*)2a)35lbwx1(so&f#!myl6ojbt%4m#y7tb$i*7izzb"
 
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '84.201.136.174', 'backend']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '84.201.136.174']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -62,6 +62,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#         }
+# }
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),

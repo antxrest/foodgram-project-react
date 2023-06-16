@@ -6,21 +6,20 @@ from .models import (FavoriteReceipe, Ingredient, IngredientInRecipesAmount,
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'measurement_unit',
-    )
+    """Админ панель управления ингредиентами."""
+    list_display = ('name', 'measurement_unit')
+    search_fields = ('name',)
     list_filter = ('name',)
-    ordering = ('name', )
+    ordering = ('name',)
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'color',
-    )
+    """Админ панель управления тегами."""
+    list_display = ('name', 'color', 'slug')
+    search_fields = ('name', 'slug')
     list_filter = ('name',)
+    empty_value_display = '-пусто-'
 
 
 @admin.register(IngredientInRecipesAmount)
@@ -36,6 +35,7 @@ class IngredientInRecipesAmountInline(admin.TabularInline):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
+    """Админ панель управления рецептами."""
     list_display = ('name', 'author', 'get_in_favorites')
     list_filter = (
         'name',
@@ -51,12 +51,17 @@ class RecipeAdmin(admin.ModelAdmin):
 
 @admin.register(FavoriteReceipe)
 class FavoriteReceipeAdmin(admin.ModelAdmin):
+    """Админ панель управления подписками."""
     list_display = ('user', 'recipe',)
     list_filter = ('user', 'recipe',)
+    search_fields = ('user', 'recipe')
     empty_value_display = '-пусто-'
 
 
 @admin.register(ShoppingCart)
 class ShoppingCartAdmin(admin.ModelAdmin):
-    list_display = ('user', 'recipe', )
+    """Админ панель списка покупок."""
+    list_display = ('user', 'recipe',)
+    list_filter = ('user', 'recipe',)
+    search_fields = ('user', )
     empty_value_display = '-пусто-'
