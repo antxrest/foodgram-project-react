@@ -61,7 +61,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            cd foodgram/
             sudo docker compose down
             sudo systemctl stop nginx
             sudo docker system prune -af
