@@ -1,61 +1,62 @@
 from django.contrib import admin
 
-from .models import (FavouriteRecipes, Ingredients, IngredientsInRecipe,
-                     Recipes, ShoppingLists, Tags)
+from .models import (FavoriteReceipe, Ingredient, IngredientInRecipesAmount,
+                     Recipe, ShoppingCart, Tag)
 
 
-@admin.register(Tags)
-class TagsAdmin(admin.ModelAdmin):
-    """В админке: отображение и редактирование тегов."""
-
-    list_display = ("pk", "name", "slug", "color")
-    list_editable = ("name", "slug", "color")
-
-
-@admin.register(Ingredients)
-class IngredientsAdmin(admin.ModelAdmin):
-    """В админке: поиск, отображение, редактирование рецептов."""
-
-    list_display = ("pk", "name", "measurement_unit")
-    list_filter = ("name",)
-    search_fields = ("name",)
+@admin.register(Ingredient)
+class IngredientAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'measurement_unit',
+    )
+    list_filter = ('name',)
+    ordering = ('name', )
 
 
-@admin.register(IngredientsInRecipe)
-class IngredientsInRecipeAdmin(admin.ModelAdmin):
-    """В админке: отобр. и ред. ингредиентов в рецептах."""
-
-    list_display = ("pk", "recipe", "ingredient", "amount")
-    list_editable = ("recipe", "ingredient", "amount")
-
-
-@admin.register(Recipes)
-class RecipesAdmin(admin.ModelAdmin):
-    """В админке: отобр. и ред., фильтр, поиск рецептов."""
-
-    list_display = ("pk", "name", "author")
-    list_editable = ("name",)
-    list_filter = ("name", "author", "tags")
-    readonly_fields = ("count_favorites",)
-    search_fields = ("name", "author")
-
-    def count_favorites(self, obj):
-        return obj.favorites.count()
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'color',
+    )
+    list_filter = ('name',)
 
 
-@admin.register(FavouriteRecipes)
-class FavouriteRecipesAdmin(admin.ModelAdmin):
-    """В админке: поиск, отображение, редактирование избранного."""
-
-    list_display = ("pk", "user", "recipe")
-    list_editable = ("user", "recipe")
-    search_fields = ("name", "recipe")
+@admin.register(IngredientInRecipesAmount)
+class AmountIngredientAdmin(admin.ModelAdmin):
+    list_display = ('amount', 'ingredient', 'recipe')
 
 
-@admin.register(ShoppingLists)
-class ShoppingListAdmin(admin.ModelAdmin):
-    """В админке: поиск, отобр., ред. списка покупок."""
+class IngredientInRecipesAmountInline(admin.TabularInline):
+    model = IngredientInRecipesAmount
+    extra = 1
+    min_num = 1
 
-    list_display = ("pk", "user", "recipe")
-    list_editable = ("user", "recipe")
-    search_fields = ("user", "recipe")
+
+@admin.register(Recipe)
+class RecipeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'author', 'get_in_favorites')
+    list_filter = (
+        'name',
+        'author',
+        'tags',
+    )
+    inlines = (IngredientInRecipesAmountInline,)
+    empty_value_display = '-пусто-'
+
+    def get_in_favorites(self, obj):
+        return obj.favorite_recipes.count()
+
+
+@admin.register(FavoriteReceipe)
+class FavoriteReceipeAdmin(admin.ModelAdmin):
+    list_display = ('user', 'recipe',)
+    list_filter = ('user', 'recipe',)
+    empty_value_display = '-пусто-'
+
+
+@admin.register(ShoppingCart)
+class ShoppingCartAdmin(admin.ModelAdmin):
+    list_display = ('user', 'recipe', )
+    empty_value_display = '-пусто-'
