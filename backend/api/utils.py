@@ -2,6 +2,7 @@ from django.shortcuts import HttpResponse
 
 
 def shopping_cart_file(ingredients):
+    """Загрузка списка покупок с ингредиентами."""
 
     shopping_list = 'Список покупок: \n'
     for ingredient in ingredients:

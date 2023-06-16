@@ -23,11 +23,14 @@ from .utils import shopping_cart_file
 
 
 class TagsViewSet(viewsets.ModelViewSet):
+    """Класс взаимодействия с моделью Tags. Вьюсет для списка тегов."""
+
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
 
 class IngredientsViewSet(viewsets.ModelViewSet):
+    """Класс взаимодействия с Ingredients. Вьюсет для ингредиентов."""
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = [IngredientFilter]
@@ -35,6 +38,7 @@ class IngredientsViewSet(viewsets.ModelViewSet):
 
 
 class UsersViewSet(UserViewSet):
+    """Класс взаимодействия с Users. Вьюсет для пользователя."""
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -73,6 +77,8 @@ class UsersViewSet(UserViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    """Класс взаимодействия с моделью Recipes. Вьюсет для рецептов."""
+
     queryset = Recipe.objects.all()
     filter_backends = (DjangoFilterBackend, )
     filterset_class = RecipeFilter

@@ -11,12 +11,14 @@ from users.models import Follow, User
 
 
 class IngredientSerializer(ModelSerializer):
+    """Сериализатор объектов типа Ingredients. Список ингредиентов."""
     class Meta:
         model = Ingredient
         fields = ('id', 'name', 'measurement_unit', )
 
 
 class IngredientsInRecipeReadSerializer(ModelSerializer):
+    """Сериализатор ингредиентов в рецептах."""
 
     id = ReadOnlyField(source='ingredient.id')
     name = ReadOnlyField(source='ingredient.name')
@@ -35,6 +37,7 @@ class IngredientsInRecipeReadSerializer(ModelSerializer):
 
 
 class Base64ImageField(ImageField):
+    """Сериализатор картинок в рецептах."""
 
     def to_internal_value(self, data):
         if isinstance(data, str) and data.startswith('data:image'):
@@ -45,6 +48,7 @@ class Base64ImageField(ImageField):
 
 
 class TagSerializer(ModelSerializer):
+    """Сериализация объектов типа Tags. Список тегов."""
 
     class Meta:
         model = Tag
@@ -57,6 +61,8 @@ class TagSerializer(ModelSerializer):
 
 
 class UserSerializer(ModelSerializer):
+    """Сериализация объектов типа User. Просмотр пользователя."""
+
     is_subscribed = SerializerMethodField(read_only=True)
 
     class Meta:
@@ -79,6 +85,7 @@ class UserSerializer(ModelSerializer):
 
 
 class UserCreateSerializer(ModelSerializer):
+    """Сериализатор создания объекта типа User."""
 
     class Meta:
         model = User
@@ -88,6 +95,8 @@ class UserCreateSerializer(ModelSerializer):
 
 
 class ShoppingListFavoiriteSerializer(ModelSerializer):
+    """Сериализация объектов типа shoppingLists. Лист покупок."""
+
     image = Base64ImageField(read_only=True)
     name = ReadOnlyField()
     cooking_time = ReadOnlyField()
@@ -103,6 +112,8 @@ class ShoppingListFavoiriteSerializer(ModelSerializer):
 
 
 class FollowSerializer(ModelSerializer):
+    """Сериализация объектов типа Follow. Проверка подписки."""
+
     email = ReadOnlyField(source='author.email')
     id = ReadOnlyField(source='author.id')
     username = ReadOnlyField(source='author.username')
@@ -156,6 +167,7 @@ class FollowSerializer(ModelSerializer):
 
 
 class IngredientsInRecipeWriteSerializer(ModelSerializer):
+    """Сериализатор добавления ингредиента в рецепт."""
     id = PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
 
     class Meta:
@@ -167,6 +179,8 @@ class IngredientsInRecipeWriteSerializer(ModelSerializer):
 
 
 class RecipesReadSerializer(ModelSerializer):
+    """Сериализация объектов типа Recipes. Чтение рецептов."""
+
     is_favorited = SerializerMethodField(read_only=True)
     is_in_shopping_cart = SerializerMethodField(read_only=True)
     ingredients = IngredientsInRecipeReadSerializer(
@@ -211,6 +225,8 @@ class RecipesReadSerializer(ModelSerializer):
 
 
 class RecipesWriteSerializer(ModelSerializer):
+    """Сериализация объектов типа Recipes. Запись рецептов."""
+
     tags = PrimaryKeyRelatedField(many=True, queryset=Tag.objects.all())
     ingredients = IngredientsInRecipeWriteSerializer(many=True,
                                                      source='recipe')
@@ -232,6 +248,7 @@ class RecipesWriteSerializer(ModelSerializer):
         read_only_fields = ('author',)
 
     def validate(self, data):
+        """Валидация ингредиентов при заполнении рецепта."""
         ingredients = data['recipe']
         tags = data['tags']
         cooking_time = data['cooking_time']

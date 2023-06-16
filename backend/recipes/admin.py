@@ -24,10 +24,12 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(IngredientInRecipesAmount)
 class AmountIngredientAdmin(admin.ModelAdmin):
+    """Отображение ингредиентов в админке."""
     list_display = ('amount', 'ingredient', 'recipe')
 
 
 class IngredientInRecipesAmountInline(admin.TabularInline):
+    """Отображение ингредиентов в рецептах в админ панели."""
     model = IngredientInRecipesAmount
     extra = 1
     min_num = 1
