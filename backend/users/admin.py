@@ -1,21 +1,20 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 
-from .models import Subscribe, User
+from .models import Follow, User
 
 
 @admin.register(User)
-class UserAdmin(UserAdmin):
-    list_display = (
-        'username',
-        'id',
-        'email',
-        'first_name',
-        'last_name',
-    )
-    list_filter = ('email', 'first_name')
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('id', 'username', 'first_name', 'last_name', 'email', )
+    search_fields = ('username', 'email', )
+    list_filter = ('first_name', 'email', )
+    list_display_links = ('username', )
 
 
-@admin.register(Subscribe)
-class SubscribeAdmin(admin.ModelAdmin):
-    list_display = ('user', 'author',)
+@admin.register(Follow)
+class FollowAdmin(admin.ModelAdmin):
+    """Админка подписчика."""
+
+    list_display = ('user', 'author')
+    list_filter = ('user', 'author')
+    search_fields = ('user', 'author')
