@@ -75,14 +75,6 @@ class UsersViewSet(UserViewSet):
         Follow.objects.filter(user=user, author=author).delete()
         return Response('Успешная отписка', status=status.HTTP_204_NO_CONTENT)
 
-    @action(
-        methods=['GET'], detail=False,
-        permission_classes=(IsAuthenticated,),
-    )
-    def me(self, request):
-        serializer = UserSerializer
-        return Response(serializer.data)
-
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """Класс взаимодействия с моделью Recipes. Вьюсет для рецептов."""
