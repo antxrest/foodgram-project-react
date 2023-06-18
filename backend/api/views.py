@@ -45,7 +45,7 @@ class UsersViewSet(UserViewSet):
 
     @action(
         detail=False,
-        methods=('get',),
+        methods=['GET'],
         permission_classes=(IsAuthenticated,)
     )
     def me(self, request):
