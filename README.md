@@ -147,7 +147,7 @@ sudo docker-compose exec backend python manage.py load_ingredient_csv
 - `PASSPHRASE` = пароль от сервера
 
 <h2>🚀Проект доступен по адресу 
-<a href="https://http://84.201.136.174/" target="_blank">FOODGRAM</a></h2>
+<a href="http://84.201.136.174/" target="_blank">FOODGRAM</a></h2>
 
 ### 🛡️Данные для входа в админку:
 ```
