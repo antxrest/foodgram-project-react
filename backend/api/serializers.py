@@ -3,8 +3,7 @@ import base64
 from django.core.files.base import ContentFile
 from rest_framework.serializers import (ImageField, ModelSerializer, CharField,
                                         PrimaryKeyRelatedField, ReadOnlyField,
-                                        SerializerMethodField, ValidationError,
-                                        CurrentUserDefault)
+                                        SerializerMethodField, ValidationError)
 
 from foodgram.settings import ZERO_MIN_VALUE
 from recipes.models import Ingredient, IngredientInRecipesAmount, Recipe, Tag
@@ -188,12 +187,10 @@ class RecipesReadSerializer(ModelSerializer):
         required=True, many=True, source='recipe'
     )
     tags = TagSerializer(
-        read_only=True,
         many=True
     )
     author = UserSerializer(
-        read_only=True,
-        default=CurrentUserDefault()
+        read_only=True
     )
     image = Base64ImageField()
 
@@ -249,9 +246,6 @@ class RecipesWriteSerializer(ModelSerializer):
             'cooking_time',
         )
         read_only_fields = ('author',)
-
-    def to_representation(self, instance):
-        return RecipesReadSerializer(instance).data
 
     def validate(self, data):
         """Валидация ингредиентов при заполнении рецепта."""
@@ -311,16 +305,16 @@ class RecipesWriteSerializer(ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        # request = self.context.get('request')
-        # if request.user.is_authenticated and \
-        #    request.user.id == instance.author_id:
-        tags = validated_data.pop('tags')
-        instance.tags.clear()
-        instance.tags.set(tags)
-        ingredients = validated_data.pop('recipe')
-        instance.ingredients.clear()
-        self.create_update_ingredient(ingredients, instance)
-        return super().update(instance, validated_data)
-        # else:
-        #     raise ValidationError('Вы не можете редактировать этот рецепт')
-        #     return instance
+        request = self.context.get('request')
+        if request.user.is_authenticated and \
+           request.user.id == instance.author_id:
+            tags = validated_data.pop('tags')
+            instance.tags.clear()
+            instance.tags.set(tags)
+            ingredients = validated_data.pop('recipe')
+            instance.ingredients.clear()
+            self.create_update_ingredient(ingredients, instance)
+            return super().update(instance, validated_data)
+        else:
+            raise ValidationError('Вы не можете редактировать этот рецепт')
+            return instance
