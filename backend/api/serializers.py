@@ -305,9 +305,9 @@ class RecipesWriteSerializer(ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        request = self.context.get('request')
-        if request.user.is_authenticated and \
-           request.user.id == instance.author_id:
+        # request = self.context.get('request')
+        # if (request.user.is_authenticated and
+        #         request.user.id == instance.author_id):
             tags = validated_data.pop('tags')
             instance.tags.clear()
             instance.tags.set(tags)
@@ -315,6 +315,6 @@ class RecipesWriteSerializer(ModelSerializer):
             instance.ingredients.clear()
             self.create_update_ingredient(ingredients, instance)
             return super().update(instance, validated_data)
-        else:
-            raise ValidationError('Вы не можете редактировать этот рецепт')
-            return instance
+        # else:
+        #     raise ValidationError('Вы не можете редактировать этот рецепт')
+        #     return instance
