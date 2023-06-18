@@ -1,7 +1,6 @@
 import base64
 
 from django.core.files.base import ContentFile
-from django.contrib.auth.decorators import login_required, user_passes_test
 from rest_framework.serializers import (ImageField, ModelSerializer, CharField,
                                         PrimaryKeyRelatedField, ReadOnlyField,
                                         SerializerMethodField, ValidationError)
@@ -307,7 +306,8 @@ class RecipesWriteSerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         request = self.context.get('request')
-        if request.user.is_authenticated and request.user.id == instance.author_id:
+        if (request.user.is_authenticated and
+            request.user.id == instance.author_id):
             tags = validated_data.pop('tags')
             instance.tags.clear()
             instance.tags.set(tags)
