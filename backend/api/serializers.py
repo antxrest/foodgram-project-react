@@ -1,6 +1,7 @@
 import base64
 
 from django.core.files.base import ContentFile
+from django.contrib.auth.decorators import login_required, user_passes_test
 from rest_framework.serializers import (ImageField, ModelSerializer, CharField,
                                         PrimaryKeyRelatedField, ReadOnlyField,
                                         SerializerMethodField, ValidationError)
@@ -305,10 +306,15 @@ class RecipesWriteSerializer(ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        tags = validated_data.pop('tags')
-        instance.tags.clear()
-        instance.tags.set(tags)
-        ingredients = validated_data.pop('recipe')
-        instance.ingredients.clear()
-        self.create_update_ingredient(ingredients, instance)
-        return super().update(instance, validated_data)
+        request = self.context.get('request')
+        if request.user.is_authenticated and request.user.id == instance.author_id:
+            tags = validated_data.pop('tags')
+            instance.tags.clear()
+            instance.tags.set(tags)
+            ingredients = validated_data.pop('recipe')
+            instance.ingredients.clear()
+            self.create_update_ingredient(ingredients, instance)
+            return super().update(instance, validated_data)
+        else:
+            raise ValidationError('Вы не можете редактировать этот рецепт')
+            return instance
