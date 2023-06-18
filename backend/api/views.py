@@ -44,6 +44,15 @@ class UsersViewSet(UserViewSet):
     serializer_class = UserSerializer
 
     @action(
+        detail=False,
+        methods=('get',),
+        permission_classes=(IsAuthenticated,)
+    )
+    def me(self, request):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(
         methods=['GET'], detail=False,
         permission_classes=(IsAuthenticated,),
         pagination_class=LimitPaginator,
