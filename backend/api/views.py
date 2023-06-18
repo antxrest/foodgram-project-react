@@ -4,7 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, IsOwnerOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from recipes.models import (FavoriteReceipe, Ingredient,
@@ -14,7 +14,7 @@ from users.models import Follow, User
 
 from .filters import RecipeFilter, IngredientFilter
 from .pagination import LimitPaginator
-# from .permission import OwnerOrReadOnly
+from .permission import IsOwnerOrReadOnly
 from .serializers import (FollowSerializer, IngredientSerializer,
                           RecipesReadSerializer, RecipesWriteSerializer,
                           ShoppingListFavoiriteSerializer, TagSerializer,
