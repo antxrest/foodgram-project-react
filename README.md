@@ -157,5 +157,5 @@ sudo docker-compose exec backend python manage.py load_ingredient_csv
 <h2> Автор проекта </a> 
 <img src="https://github.com/blackcater/blackcater/raw/main/images/Hi.gif" height="32" width="32"/></h2>
 
-[Антон Молчанов](https://github.com/antxrest)
+[Антон Молчанов](https://github.com/arigatosha)
 
